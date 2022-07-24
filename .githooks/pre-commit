@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# uncomment next line to debug
+# set -x
+
+DIR=$(git rev-parse --show-toplevel)
+
+#
+# To disable some checks, set DISABLED_PRE_COMMIT_CHECKS
+# environment variable. For example:
+#
+#     export DISABLED_PRE_COMMIT_CHECKS="lint"
+#
+
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep '^src/*')
+
+
+if [[ ! -z "$STAGED_FILES" ]]
+then
+  # run linter on staged files
+  if [[ ! ",${DISABLED_PRE_COMMIT_CHECKS}," =~ ",lint," ]]
+  then
+    echo "Running Linter..."
+    yarn lint $STAGED_FILES
+    LINTER_EXIT_CODE=$?
+
+    # check linter exit code
+    if [ $LINTER_EXIT_CODE -ne 0 ]; then
+        echo "❌ Please fix lint errors first "
+        exit 1
+    else
+        echo "✅ lint all good"
+    fi
+
+    # add files auto-fixed by the linter
+    git add -f $STAGED_FILES
+  fi
+
+
+  # run tests related to staged files
+  if [[ ! ",${DISABLED_PRE_COMMIT_CHECKS}," =~ ",test," ]]
+  then
+    echo "Running Tests"
+    yarn test -- --coverage --findRelatedTests $STAGED_FILES
+    JEST_EXIT_CODE=$?
+
+    # check jest exit code
+    if [ $JEST_EXIT_CODE -ne 0 ]; then
+        echo "❌ Please fix unit tests first"
+        exit 1
+    else
+        echo "✅ tests all good"
+    fi
+  fi
+fi
