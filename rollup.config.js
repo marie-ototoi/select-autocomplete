@@ -6,8 +6,7 @@ import { terser } from "rollup-plugin-terser";
 import external from "rollup-plugin-peer-deps-external";
 import styles from "rollup-plugin-styles";
 import dts from "rollup-plugin-dts";
-
-const packageJson = require("./package.json");
+import packageJson from "./package.json";
 
 const config = [
   {

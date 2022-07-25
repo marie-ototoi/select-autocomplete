@@ -30,7 +30,7 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "lint": "eslint",
-    "test": "react-scripts test",
+    "test": "react-scripts test --watchAll=false",
     "test:watch": "react-scripts test --watch",
     "test:coverage": "react-scripts test --coverage",
     "storybook": "start-storybook -p 6006 -s public "

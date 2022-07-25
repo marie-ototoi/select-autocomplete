@@ -4,5 +4,13 @@
     "plugin:@typescript-eslint/recommended",
     "prettier"
   ],
-  "ignorePatterns": ["**/*.svg", "**/*.css", "**/*.mdx"]
+  "ignorePatterns": ["**/*.svg", "**/*.css", "**/*.mdx"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "testcafe/**/*", "jest.config.js"],
+      "rules": {
+        "no-undef": "off"
+      }
+    }
+  ]
 }
