@@ -1,11 +1,19 @@
 import React, { FC } from "react";
 
-export interface Props {
+export interface SelectAutocompleteProps {
   multi?: boolean;
+  label?: string;
 }
 
-const SelectAutocomplete: FC<Props> = () => {
-  return <></>;
+const SelectAutocomplete: FC<SelectAutocompleteProps> = ({ label }) => {
+  return (
+    <>
+      <label>
+        {label}
+        <input type="text" />
+      </label>
+    </>
+  );
 };
 
 export default SelectAutocomplete;

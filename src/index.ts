@@ -1,3 +1,6 @@
-//import useSelectAutoComplete from "./hooks/useSelectAutocomplete";
+import SelectAutocomplete, {
+  SelectAutocompleteProps,
+} from "./components/SelectAutocomplete";
 
-//export { useSelectAutoComplete };
+export { SelectAutocomplete };
+export type { SelectAutocompleteProps };

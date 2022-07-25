@@ -4,6 +4,9 @@ import SelectAutocomplete from "../SelectAutocomplete";
 
 describe("SelectAutocomplete", () => {
   describe("default text field", () => {
-    it("should render text field", () => {});
+    it("should render default text field with label", () => {
+      render(<SelectAutocomplete label="Pays" />);
+      expect(screen.getByLabelText("Pays")).toBeInTheDocument();
+    });
   });
 });
