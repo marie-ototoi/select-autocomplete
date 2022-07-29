@@ -6,32 +6,27 @@ import { SelectAutocomplete, SelectAutocompleteProps } from "../";
 export default {
   component: SelectAutocomplete,
   argTypes: {
-    backgroundColor: {
+    label: {
       control: { type: "text" },
     },
-    cover: {
-      control: { type: "text" },
-    },
-    fillColor: {
-      control: { type: "text" },
-    },
-    side: {
-      control: { type: "number" },
-    },
-    textColor: {
-      control: { type: "text" },
+    options: {
+      control: { type: "array" },
     },
   },
 } as ComponentMeta<typeof SelectAutocomplete>;
 
-const Template: Story<SelectAutocompleteProps> = (args): any => {
+const Template: Story<SelectAutocompleteProps> = (args) => {
   return <SelectAutocomplete {...args} />;
 };
 
 const Default = Template.bind({});
 
 Default.args = {
-  label: "Département",
+  label: "Pays",
+  options: [
+    { label: "France", value: "fr" },
+    { label: "Italie", value: "it" },
+  ],
 };
 
 export { Default };
