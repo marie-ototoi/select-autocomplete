@@ -1,15 +1,12 @@
-import { FC, PropsWithChildren, useRef, useState } from "react";
+import { FC, useRef, useState } from "react";
 import type { Option } from "../types/options";
-export interface SelectAutocomplete {
-  multi?: boolean;
-}
 
-export interface SelectDefaultAutocomplete extends SelectAutocomplete {
+export interface SelectAutocompleteProps {
   label: string;
   options: Option[];
 }
 
-const SelectAutocomplete: FC<PropsWithChildren<SelectDefaultAutocomplete>> = ({
+const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
   label,
   options,
 }) => {
@@ -20,9 +17,21 @@ const SelectAutocomplete: FC<PropsWithChildren<SelectDefaultAutocomplete>> = ({
       {
         <label>
           {label}
-          <input type="text" />
+          <input
+            type="text"
+            onFocus={() => {
+              if (!isOpen) setIsOpen(true);
+            }}
+          />
         </label>
       }
+      <button
+        onClick={() => {
+          setIsOpen(!isOpen);
+        }}
+      >
+        <img alt={`${isOpen ? "Masquer" : "Afficher"} les options`} />
+      </button>
       {isOpen &&
         options?.map(({ label, value }: Option) => (
           <li data-value={value}>{label}</li>
