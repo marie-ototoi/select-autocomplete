@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { FC, useRef, useEffect, useState } from "react";
 import type { Option } from "../types/options";
 
 export interface SelectAutocompleteProps {
@@ -10,10 +10,23 @@ const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
   label,
   options,
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent): void => {
+      if (!containerRef.current?.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (containerRef.current) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [containerRef]);
   return (
-    <div ref={ref}>
+    <div ref={containerRef}>
       {
         <label>
           {label}

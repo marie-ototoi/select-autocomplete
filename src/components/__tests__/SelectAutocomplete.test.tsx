@@ -38,7 +38,20 @@ describe("SelectAutocomplete", () => {
       render(<SelectAutocomplete {...props} />);
       await userEvent.click(screen.getByRole("textbox"));
       await userEvent.click(screen.getByAltText("Masquer les options"));
-      expect(screen.queryAllByRole("checkbox")).toHaveLength(0);
+      expect(screen.queryAllByRole("listitem")).toHaveLength(0);
+    });
+    it("should close and hide options when the user focuses outside of the field", async () => {
+      render(
+        <>
+          <button>Outside</button>
+          <SelectAutocomplete {...props} />
+        </>
+      );
+      await userEvent.click(screen.getByRole("textbox"));
+      await userEvent.click(
+        await screen.findByRole("button", { name: "Outside" })
+      );
+      expect(screen.queryAllByRole("listitem")).toHaveLength(0);
     });
   });
 });
