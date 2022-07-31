@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, ReactNode, useRef } from "react";
+import { FC, PropsWithChildren, useRef, useState } from "react";
 import type { Option } from "../types/options";
 export interface SelectAutocomplete {
   multi?: boolean;
@@ -14,6 +14,7 @@ const SelectAutocomplete: FC<PropsWithChildren<SelectDefaultAutocomplete>> = ({
   options,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div ref={ref}>
       {
@@ -22,9 +23,10 @@ const SelectAutocomplete: FC<PropsWithChildren<SelectDefaultAutocomplete>> = ({
           <input type="text" />
         </label>
       }
-      {options?.map(({ label, value }: Option) => (
-        <li data-value={value}>{label}</li>
-      ))}
+      {isOpen &&
+        options?.map(({ label, value }: Option) => (
+          <li data-value={value}>{label}</li>
+        ))}
     </div>
   );
 };

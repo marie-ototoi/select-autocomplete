@@ -20,4 +20,19 @@ describe("SelectAutocomplete", () => {
     );
     expect(screen.getByLabelText("Pays")).toBeInTheDocument();
   });
+  describe("Options", () => {
+    it("should not display options at first display", () => {
+      render(
+        <SelectAutocomplete
+          label="Pays"
+          options={[
+            { label: "France", value: "fr" },
+            { label: "Italie", value: "it" },
+          ]}
+        />
+      );
+      expect(screen.queryByText("France")).not.toBeInTheDocument();
+      expect(screen.queryByText("Italie")).not.toBeInTheDocument();
+    });
+  });
 });
