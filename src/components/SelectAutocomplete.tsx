@@ -48,6 +48,10 @@ const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
     );
   }, [search]);
 
+  useEffect(() => {
+    if (!isOpen && search !== "") setSearch("");
+  }, [isOpen]);
+
   return (
     <div ref={containerRef}>
       {

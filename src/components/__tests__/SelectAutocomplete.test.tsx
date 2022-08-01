@@ -86,5 +86,14 @@ describe("SelectAutocomplete", () => {
         ["France", "Danemark"].length
       );
     });
+    it("should reset filter when the user closes and reopens the field", async () => {
+      render(<SelectAutocomplete {...props} />);
+      await userEvent.type(screen.getByRole("textbox"), "an");
+      await userEvent.click(screen.getByAltText("Masquer les options"));
+      await userEvent.click(screen.getByAltText("Afficher les options"));
+      expect(screen.getAllByRole("listitem")).toHaveLength(
+        props.options.length
+      );
+    });
   });
 });
