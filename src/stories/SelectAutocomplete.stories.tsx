@@ -27,6 +27,7 @@ Default.args = {
     { label: "France", value: "fr" },
     { label: "Italie", value: "it" },
   ],
+  selectedOptions: ["fr"],
 };
 
 export { Default };

@@ -9,7 +9,9 @@ describe("SelectAutocomplete", () => {
     options: [
       { label: "France", value: "fr" },
       { label: "Italie", value: "it" },
+      { label: "Espagne", value: "es" },
     ],
+    selectedOptions: ["fr"],
   };
 
   it("should render default text field with label", () => {
@@ -52,6 +54,26 @@ describe("SelectAutocomplete", () => {
         await screen.findByRole("button", { name: "Outside" })
       );
       expect(screen.queryAllByRole("listitem")).toHaveLength(0);
+    });
+    it("should display options as selected when the user selects them", async () => {
+      const additionalValues = ["Italie"];
+      const { container } = render(<SelectAutocomplete {...props} />);
+      await userEvent.click(screen.getByRole("textbox"));
+      await userEvent.click(await screen.findByText("Italie"));
+      const selected = container.querySelectorAll("li[data-selected=true]");
+      expect(selected).toHaveLength(
+        props.selectedOptions.length + additionalValues.length
+      );
+    });
+    it("should not display options as selected when the user unselects them", async () => {
+      const unselectedValues = ["France"];
+      const { container } = render(<SelectAutocomplete {...props} />);
+      await userEvent.click(screen.getByRole("textbox"));
+      await userEvent.click(await screen.findByText("France"));
+      const selected = container.querySelectorAll("li[data-selected=true]");
+      expect(selected).toHaveLength(
+        props.selectedOptions.length - unselectedValues.length
+      );
     });
   });
 });

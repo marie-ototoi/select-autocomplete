@@ -3,3 +3,6 @@
   flex-direction: column;
   font-family: Arial, sans-serif;
 }
+.option-selected {
+  font-weight: bold;
+}
