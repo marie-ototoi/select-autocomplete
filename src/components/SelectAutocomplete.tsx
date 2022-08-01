@@ -15,10 +15,18 @@ const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [filteredOptions, setFilteredOptions] = useState(options);
+  const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(selectedOptions);
+
   useEffect(() => {
     setSelected(selectedOptions);
   }, [selectedOptions]);
+
+  useEffect(() => {
+    setFilteredOptions(options);
+  }, [options]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent): void => {
       if (!containerRef.current?.contains(e.target as Node)) {
@@ -32,6 +40,14 @@ const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [containerRef]);
+
+  useEffect(() => {
+    const regExp = new RegExp(search, "i");
+    setFilteredOptions(
+      options.filter((option) => search === "" || option.label.match(regExp))
+    );
+  }, [search]);
+
   return (
     <div ref={containerRef}>
       {
@@ -41,6 +57,9 @@ const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
             type="text"
             onFocus={() => {
               if (!isOpen) setIsOpen(true);
+            }}
+            onChange={(e) => {
+              setSearch(e.target.value);
             }}
           />
         </label>
@@ -52,9 +71,9 @@ const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
       >
         <img alt={`${isOpen ? "Masquer" : "Afficher"} les options`} />
       </button>
-      {isOpen && options.length > 0 && (
+      {isOpen && filteredOptions.length > 0 && (
         <ul>
-          {options?.map(({ label, value }: Option) => (
+          {filteredOptions?.map(({ label, value }: Option) => (
             <li
               data-value={value}
               data-selected={selected.includes(value)}

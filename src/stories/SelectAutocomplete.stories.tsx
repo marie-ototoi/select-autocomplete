@@ -26,6 +26,9 @@ Default.args = {
   options: [
     { label: "France", value: "fr" },
     { label: "Italie", value: "it" },
+    { label: "Espagne", value: "es" },
+    { label: "Danemark", value: "dk" },
+    { label: "Suède", value: "sv" },
   ],
   selectedOptions: ["fr"],
 };

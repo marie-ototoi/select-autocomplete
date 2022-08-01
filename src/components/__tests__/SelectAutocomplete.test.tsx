@@ -10,6 +10,8 @@ describe("SelectAutocomplete", () => {
       { label: "France", value: "fr" },
       { label: "Italie", value: "it" },
       { label: "Espagne", value: "es" },
+      { label: "Danemark", value: "dk" },
+      { label: "Suède", value: "sv" },
     ],
     selectedOptions: ["fr"],
   };
@@ -73,6 +75,15 @@ describe("SelectAutocomplete", () => {
       const selected = container.querySelectorAll("li[data-selected=true]");
       expect(selected).toHaveLength(
         props.selectedOptions.length - unselectedValues.length
+      );
+    });
+  });
+  describe("filter options", () => {
+    it("should filter options when the user types in the field", async () => {
+      render(<SelectAutocomplete {...props} />);
+      await userEvent.type(screen.getByRole("textbox"), "an");
+      expect(screen.getAllByRole("listitem")).toHaveLength(
+        ["France", "Danemark"].length
       );
     });
   });
