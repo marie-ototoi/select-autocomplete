@@ -4,12 +4,16 @@ import styles from "./SelectAutocomplete.module.css";
 
 export interface SelectAutocompleteProps {
   label: string;
+  multi?: boolean;
+  name: string;
   options: Option[];
   selectedOptions?: string[];
 }
 
 const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
   label,
+  multi = false,
+  name,
   options,
   selectedOptions = [],
 }) => {
@@ -52,22 +56,45 @@ const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
     if (!isOpen && search !== "") setSearch("");
   }, [isOpen]);
 
+  const selectOption = (value: string) => {
+    let updatedSelection;
+    if (selected.includes(value)) {
+      updatedSelection = selected.filter((li) => li !== value);
+    } else {
+      updatedSelection = multi ? [...selected, value] : [value];
+    }
+    setSelected(updatedSelection);
+  };
+
   return (
     <div ref={containerRef}>
       {
         <label>
           {label}
-          <input
-            type="text"
-            onFocus={() => {
-              if (!isOpen) setIsOpen(true);
-            }}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-          />
+          <select
+            className={styles.hidden}
+            name={name}
+            {...(multi ? { multiple: true } : {})}
+            value={multi ? selected : selected[0]}
+          >
+            {options?.map(({ label, value }: Option) => (
+              <option key={`option-${value}`} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
         </label>
       }
+      <input
+        type="text"
+        name={`filter-${name}`}
+        onFocus={() => {
+          if (!isOpen) setIsOpen(true);
+        }}
+        onChange={(e) => {
+          setSearch(e.target.value);
+        }}
+      />
       <button
         onClick={() => {
           setIsOpen(!isOpen);
@@ -84,13 +111,9 @@ const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
               className={
                 selected.includes(value) ? styles["option-selected"] : ""
               }
-              key={`option-${value}`}
+              key={`option-display-${value}`}
               onClick={() => {
-                setSelected(
-                  selected.includes(value)
-                    ? selected.filter((li) => li !== value)
-                    : [...selected, value]
-                );
+                selectOption(value);
               }}
             >
               {label}

@@ -23,6 +23,7 @@ const Default = Template.bind({});
 
 Default.args = {
   label: "Pays",
+  name: "country",
   options: [
     { label: "France", value: "fr" },
     { label: "Italie", value: "it" },
@@ -33,4 +34,8 @@ Default.args = {
   selectedOptions: ["fr"],
 };
 
-export { Default };
+const Multi = Template.bind({});
+
+Multi.args = { ...Default.args, multi: true };
+
+export { Default, Multi };
