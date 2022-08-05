@@ -61,7 +61,12 @@ const SelectAutocomplete: FC<SelectAutocompleteProps> = ({
     if (selected.includes(value)) {
       updatedSelection = selected.filter((li) => li !== value);
     } else {
-      updatedSelection = multi ? [...selected, value] : [value];
+      if (multi) {
+        updatedSelection = [...selected, value];
+      } else {
+        updatedSelection = [value];
+        setIsOpen(false);
+      }
     }
     setSelected(updatedSelection);
   };

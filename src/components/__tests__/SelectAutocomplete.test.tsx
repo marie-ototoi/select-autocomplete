@@ -1,5 +1,11 @@
 import React from "react";
-import { findByText, render, screen, within } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+  within,
+} from "@testing-library/react";
 import SelectAutocomplete from "../SelectAutocomplete";
 import userEvent from "@testing-library/user-event";
 
@@ -16,7 +22,6 @@ describe("SelectAutocomplete", () => {
     ],
     selectedOptions: ["fr"],
   };
-
   it("should render label", () => {
     render(<SelectAutocomplete {...props} />);
     expect(screen.getByLabelText("Pays")).toBeInTheDocument();
@@ -82,12 +87,12 @@ describe("SelectAutocomplete", () => {
       await userEvent.click(await within(list).findByText("Italie"));
       expect(screen.getByRole("combobox")).toHaveValue("it");
     });
-    it("should select several options", async () => {
-      render(<SelectAutocomplete {...{ ...props, multi: true }} />);
+    it("should close list after selection", async () => {
+      render(<SelectAutocomplete {...props} />);
       await userEvent.click(screen.getByRole("textbox"));
       const list = await screen.getByRole("list");
       await userEvent.click(await within(list).findByText("Italie"));
-      expect(screen.getByRole("listbox")).toHaveValue(["fr", "it"]);
+      expect(within(list).queryByText("Italie")).not.toBeInTheDocument();
     });
     it("should unselect selected option", async () => {
       const unselectedValues = ["France"];
@@ -98,6 +103,15 @@ describe("SelectAutocomplete", () => {
       expect(selected).toHaveLength(
         props.selectedOptions.length - unselectedValues.length
       );
+    });
+    describe("multiple", () => {
+      it("should leave list open after selection", async () => {
+        render(<SelectAutocomplete {...{ ...props, multi: true }} />);
+        await userEvent.click(screen.getByRole("textbox"));
+        const list = await screen.getByRole("list");
+        await userEvent.click(await within(list).findByText("Italie"));
+        expect(await within(list).findByText("Italie")).toBeInTheDocument();
+      });
     });
   });
   describe("filter options", () => {
