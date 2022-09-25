@@ -1,8 +1,6 @@
-# Ototoï music player
+# Select Autocomplete
 
-This is a music player I originally codesigned with Gregory Pignot in 2008 for the website ototoïmusic.
-
-Examples are available on <a href="https://www.ototoi.fr/otoplayer">ototoï music player demo webpage</a>.
+This component is largely inspired from https://alphagov.github.io/accessible-autocomplete.
 
 ## Available Scripts
 
@@ -30,7 +28,7 @@ Contributions are very welcome.
 
 ### Report an issue
 
-[https://github.com/marie-ototoi/otoplayer/pulls](https://github.com/marie-ototoi/otoplayer/pulls)
+[https://github.com/marie-ototoi/select-autocomplete/pulls](https://github.com/marie-ototoi/select-autocomplete/pulls)
 
 ### Make a pull request
 

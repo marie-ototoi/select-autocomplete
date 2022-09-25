@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  render,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-  within,
-} from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import SelectAutocomplete from "../SelectAutocomplete";
 import userEvent from "@testing-library/user-event";
 
@@ -22,42 +16,28 @@ describe("SelectAutocomplete", () => {
     ],
     selectedOptions: ["fr"],
   };
-  it("should render label", () => {
+  it("should render input field", () => {
     render(<SelectAutocomplete {...props} />);
     expect(screen.getByLabelText("Pays")).toBeInTheDocument();
-  });
-  it("should render field with selected option", () => {
-    render(<SelectAutocomplete {...props} />);
-    expect(screen.getByLabelText("Pays")).toHaveValue("fr");
-  });
-  describe("multiple", () => {
-    it("should render field with selected options", () => {
-      render(<SelectAutocomplete {...{ ...props, multi: true }} />);
-      expect(screen.getByLabelText("Pays")).toHaveValue(["fr"]);
-    });
   });
   describe("display options", () => {
     it("should not display options at first display", () => {
       render(<SelectAutocomplete {...props} />);
-      expect(
-        screen.queryByRole("listitem", { name: "France" })
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByRole("listitem", { name: "Italie" })
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
     it("should open and display all options when the user focuses on the field", async () => {
       render(<SelectAutocomplete {...props} />);
-      await userEvent.click(screen.getByRole("textbox"));
-      expect(await screen.findAllByRole("listitem")).toHaveLength(
+      await userEvent.click(screen.getByRole("combobox", { name: "Pays" }));
+      const list = screen.getByRole("listbox");
+      expect(await within(list).findAllByRole("option")).toHaveLength(
         props.options.length
       );
     });
     it("should close and hide all options when the user triggers the close arrow button", async () => {
       render(<SelectAutocomplete {...props} />);
-      await userEvent.click(screen.getByRole("textbox"));
+      await userEvent.click(screen.getByRole("combobox", { name: "Pays" }));
       await userEvent.click(screen.getByAltText("Masquer les options"));
-      expect(screen.queryAllByRole("listitem")).toHaveLength(0);
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
     it("should close and hide options when the user focuses outside of the field", async () => {
       render(
@@ -66,70 +46,98 @@ describe("SelectAutocomplete", () => {
           <SelectAutocomplete {...props} />
         </>
       );
-      await userEvent.click(screen.getByRole("textbox"));
+      await userEvent.click(screen.getByRole("combobox", { name: "Pays" }));
       await userEvent.click(
         await screen.findByRole("button", { name: "Outside" })
       );
-      expect(screen.queryAllByRole("listitem")).toHaveLength(0);
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
-    it("should display mark selected options as selected", async () => {
+    it("should display selected options as selected", async () => {
       const { container } = render(<SelectAutocomplete {...props} />);
-      await userEvent.click(screen.getByRole("textbox"));
+      await userEvent.click(screen.getByRole("combobox", { name: "Pays" }));
       const selected = container.querySelectorAll("li[data-selected=true]");
       expect(selected).toHaveLength(props.selectedOptions.length);
-    });
-  });
-  describe("select options", () => {
-    it("should select only one option", async () => {
-      render(<SelectAutocomplete {...props} />);
-      await userEvent.click(screen.getByRole("textbox"));
-      const list = await screen.getByRole("list");
-      await userEvent.click(await within(list).findByText("Italie"));
-      expect(screen.getByRole("combobox")).toHaveValue("it");
-    });
-    it("should close list after selection", async () => {
-      render(<SelectAutocomplete {...props} />);
-      await userEvent.click(screen.getByRole("textbox"));
-      const list = await screen.getByRole("list");
-      await userEvent.click(await within(list).findByText("Italie"));
-      expect(within(list).queryByText("Italie")).not.toBeInTheDocument();
-    });
-    it("should unselect selected option", async () => {
-      const unselectedValues = ["France"];
-      const { container } = render(<SelectAutocomplete {...props} />);
-      await userEvent.click(screen.getByRole("textbox"));
-      await userEvent.click(await screen.findAllByText("France")[1]);
-      const selected = container.querySelectorAll("li[data-selected=true]");
-      expect(selected).toHaveLength(
-        props.selectedOptions.length - unselectedValues.length
-      );
-    });
-    describe("multiple", () => {
-      it("should leave list open after selection", async () => {
-        render(<SelectAutocomplete {...{ ...props, multi: true }} />);
-        await userEvent.click(screen.getByRole("textbox"));
-        const list = await screen.getByRole("list");
-        await userEvent.click(await within(list).findByText("Italie"));
-        expect(await within(list).findByText("Italie")).toBeInTheDocument();
-      });
     });
   });
   describe("filter options", () => {
     it("should filter options when the user types in the field", async () => {
       render(<SelectAutocomplete {...props} />);
-      await userEvent.type(screen.getByRole("textbox"), "an");
-      expect(screen.getAllByRole("listitem")).toHaveLength(
+      await userEvent.type(
+        screen.getByRole("combobox", { name: "Pays" }),
+        "an"
+      );
+      const list = screen.getByRole("listbox");
+      expect(within(list).getAllByRole("option")).toHaveLength(
         ["France", "Danemark"].length
       );
     });
     it("should reset filter when the user closes and reopens the field", async () => {
       render(<SelectAutocomplete {...props} />);
-      await userEvent.type(screen.getByRole("textbox"), "an");
+      await userEvent.type(
+        screen.getByRole("combobox", { name: "Pays" }),
+        "an"
+      );
       await userEvent.click(screen.getByAltText("Masquer les options"));
       await userEvent.click(screen.getByAltText("Afficher les options"));
-      expect(screen.getAllByRole("listitem")).toHaveLength(
+      const list = screen.getByRole("listbox");
+      expect(within(list).getAllByRole("option")).toHaveLength(
         props.options.length
       );
+    });
+  });
+  describe("select options", () => {
+    describe("single", () => {
+      it("should preselect option", () => {
+        render(<SelectAutocomplete {...props} />);
+        expect(screen.getByTestId("select")).toHaveValue("fr");
+      });
+      it("should select only one option", async () => {
+        render(<SelectAutocomplete {...props} />);
+
+        await userEvent.click(screen.getByRole("combobox", { name: "Pays" }));
+        const list = await screen.findByRole("listbox");
+        await userEvent.click(
+          await within(list).findByRole("option", { name: /Italie/ })
+        );
+        expect(screen.getByTestId("select")).toHaveValue("it");
+      });
+      it("should close list after selection", async () => {
+        render(<SelectAutocomplete {...props} />);
+        await userEvent.click(screen.getByRole("combobox", { name: "Pays" }));
+        const list = await screen.findByRole("listbox");
+        await userEvent.click(
+          await within(list).findByRole("option", { name: "Italie" })
+        );
+        expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+      });
+    });
+    describe("multiple", () => {
+      it("should preselect multiple options", () => {
+        render(<SelectAutocomplete {...{ ...props, multi: true }} />);
+        expect(screen.getByTestId("select")).toHaveValue(["fr"]);
+      });
+      it("should unselect selected option", async () => {
+        const unselectedValues = ["France"];
+        const { container } = render(
+          <SelectAutocomplete {...{ ...props, multi: true }} />
+        );
+        await userEvent.click(screen.getByRole("combobox", { name: "Pays" }));
+        const list = await screen.findByTestId("list");
+        await userEvent.click(await within(list).findByText("France"));
+        const selected = container.querySelectorAll("li[data-selected=true]");
+        expect(selected).toHaveLength(
+          props.selectedOptions.length - unselectedValues.length
+        );
+      });
+      it("should leave list open after selection", async () => {
+        render(<SelectAutocomplete {...{ ...props, multi: true }} />);
+        await userEvent.click(screen.getByRole("combobox", { name: "Pays" }));
+        const list = await screen.findByTestId("list");
+        await userEvent.click(
+          await within(list).findByRole("option", { name: "Italie" })
+        );
+        expect(list).toBeInTheDocument();
+      });
     });
   });
 });

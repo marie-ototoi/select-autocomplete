@@ -3,9 +3,15 @@
   flex-direction: column;
   font-family: Arial, sans-serif;
 }
+.visually-hidden {
+  display: none;
+}
 .hidden {
   display: none;
 }
 .option-selected {
   font-weight: bold;
+}
+.option-hovered {
+  background: #dedede;
 }
